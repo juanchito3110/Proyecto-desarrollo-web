@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Condefitted</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/logo.png" alt="Logo Condefitted" class="logo-img">
+            <h1><a href="index.html" style="text-decoration: none; color: inherit;">Condefitted</a></h1>
+        </div>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="shop.html">Tienda</a>
+            <a href="about.html">Acerca de</a>
+            <a href="contact.html">Contacto</a>
+        </nav>
+        <div class="icons">
+            <a href="search.html" class="icon" title="Buscar">
+                <span>🔍</span>
+            </a>
+
+            <a href="cart.html" class="icon" title="Carrito">
+                <span>🛒</span>
+            </a>
+        </div>
+    </header>
+    <div class="banner">
+        <p>🛒 Envío exprés gratis en compras superiores a $4499. Pago seguro con PayPal, MercadoPago, y más. 🛒</p>
+    </div>
+    <main>
+        <div id="login-container">
+            <h2>Iniciar Sesión</h2>
+            <div id="message" class="message" style="display: none;"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="usuario">Usuario</label>
+                    <input type="text" id="usuario" name="usuario" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Contraseña</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <span>Iniciar Sesión</span>
+                    <div class="loader" style="display: none;"></div>
+                </button>
+            </form>
+
+            <div id="logout-container" style="display: none;">
+                <h3>Ya estás iniciado sesión</h3>
+                <button id="logout-btn" class="submit-btn">
+                    <span>Cerrar Sesión</span>
+                </button>
+            </div>
+
+            <p>¿No tienes cuenta? <a href="account.html">Regístrate aquí</a></p>
+        </div>
+    </main>
+    <footer>
+        <p>© 2024 Condefitted - Todos los derechos reservados</p>
+    </footer>
+    <script src="scripts.js"></script>
+    <script src="check_session.js"></script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Verificar estado de sesión al cargar la página
+        async function checkLoginStatus() {
+            try {
+                const response = await fetch('check_session.php', {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                const data = await response.json();
+                
+                const loginForm = document.getElementById('loginForm');
+                const logoutContainer = document.getElementById('logout-container');
+                
+                if (data.loggedIn) {
+                    // Ocultar formulario de login
+                    loginForm.style.display = 'none';
+                    // Mostrar contenedor de logout
+                    logoutContainer.style.display = 'block';
+                } else {
+                    // Mostrar formulario de login
+                    loginForm.style.display = 'block';
+                    // Ocultar contenedor de logout
+                    logoutContainer.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error al verificar sesión:', error);
+            }
+        }
+
+        // Manejar cierre de sesión
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async (e) => {
+                e.preventDefault();
+                try {
+                    const response = await fetch('logout.php');
+                    window.location.href = 'index.html';
+                } catch (error) {
+                    console.error('Error al cerrar sesión:', error);
+                }
+            });
+        }
+
+        // Llamar a la función de verificación de sesión
+        checkLoginStatus();
+    });
+    </script>
+</body>
+</html>
